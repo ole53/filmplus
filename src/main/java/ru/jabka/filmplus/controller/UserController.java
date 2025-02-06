@@ -42,6 +42,18 @@ public class UserController {
         return userService.update(user);
     }
 
+    @PatchMapping("/addUser")
+    @Operation(summary = "Добавление пользователя в друзья")
+    public User addFriend(@RequestBody final User user, @RequestBody final User userAdd) {
+        return userService.addUser(user, userAdd);
+    }
+
+    @PatchMapping("/removeUser")
+    @Operation(summary = "Удаление пользователя из друзей")
+    public User removeFriend(@RequestBody final User user, @RequestBody final User userRemove) {
+        return userService.removeUser(user, userRemove);
+    }
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Удаление пользователя")
     public void delete(@PathVariable final Long id) {
