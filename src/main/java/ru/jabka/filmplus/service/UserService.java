@@ -19,7 +19,7 @@ public class UserService {
         return user;
     }
 
-    public User getById(final Long id) {
+    public static User getById(final Long id) {
         final User user = users.stream()
                 .filter(u -> u.getId() == id)
                 .findFirst()
@@ -38,6 +38,8 @@ public class UserService {
         }
         existUser.setName(user.getName());
         existUser.setEmail(user.getEmail());
+        existUser.setLogin(user.getLogin());
+        existUser.setBirthday(user.getBirthday());
         return existUser;
     }
 
@@ -55,5 +57,24 @@ public class UserService {
         if (!StringUtils.hasText(user.getEmail())) {
             throw new BadRequestException("Необходимо указать адрес электронной почты пользователя!");
         }
+        if (!StringUtils.hasText(user.getLogin())) {
+            throw new BadRequestException("Необходимо указать логин!");
+        }
+        if (user.getBirthday() == null) {
+            throw new BadRequestException("Необходимо указать дату рождения!");
+        }
+    }
+
+    public User addUserToFriend(final Long userId, final Long userFriendId) {
+        final User user = getById(userId);
+        final User userFriend = getById(userFriendId);
+
+        if (!user.getFriends().contains(userFriendId)){
+            user.addFriend(userFriendId);
+            userFriend.addFriend(userId);
+        } else {
+            throw new BadRequestException("Пользователи находятся в друзьях!");
+        }
+        return user;
     }
 }
