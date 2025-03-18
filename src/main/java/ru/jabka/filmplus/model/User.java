@@ -1,9 +1,7 @@
 package ru.jabka.filmplus.model;
 
-import ru.jabka.filmplus.model.UserExtraInfo.Friend;
-
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.ArrayList;
 
 public class User {
 
@@ -12,7 +10,7 @@ public class User {
     private String email;
     private String login;
     private LocalDate birthday;
-    private HashSet<Friend> friends;
+    private ArrayList<Long> friends;
 
     public User(final Long id, final String name, final String email, final String login, final LocalDate birthday) {
         this.id = id;
@@ -20,6 +18,7 @@ public class User {
         this.email = email;
         this.login = login;
         this.birthday = birthday;
+        this.friends = new ArrayList<>();
     }
 
     public Long getId() {
@@ -38,7 +37,7 @@ public class User {
 
     public LocalDate getBirthday() { return this.birthday; }
 
-    public HashSet<Friend> getFriends() { return this.friends; }
+    public ArrayList<Long> getFriends() { return this.friends; }
 
     public void setId(Long id) {
         this.id = id;
@@ -56,5 +55,5 @@ public class User {
 
     public void setLogin(String login) { this.login = login; }
 
-    public void addFriend(Friend friend) { this.friends.add(friend); }
+    public void addFriend(Long userId) { this.friends.add(userId); }
 }

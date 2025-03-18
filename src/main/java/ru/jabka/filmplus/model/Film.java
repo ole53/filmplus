@@ -1,10 +1,7 @@
 package ru.jabka.filmplus.model;
 
-import ru.jabka.filmplus.model.FilmExtraInfo.Like;
-import ru.jabka.filmplus.model.FilmExtraInfo.Comment;
-
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.ArrayList;
 
 public class Film {
 
@@ -14,8 +11,8 @@ public class Film {
     private LocalDate releaseDate;
     private Long duration;
     private Genre genres;
-    private HashSet<Comment> comments;
-    private HashSet<Like> likes;
+    private ReviewRequest comments;
+    private LikeRequest usersLikes;
 
     public Film (Long id, String name, String description, LocalDate releaseDate, Long duration, Genre genres) {
         this.id = id;
@@ -24,6 +21,8 @@ public class Film {
         this.releaseDate = releaseDate;
         this.duration = duration;
         this.genres = genres;
+        this.comments = new ReviewRequest();
+        this.usersLikes = new LikeRequest();
     }
 
     public Long getId() { return this.id; }
@@ -38,9 +37,9 @@ public class Film {
 
     public Genre getGenres() { return this.genres; }
 
-    public String getComments() { return this.comments.toString(); }
+    public ArrayList<Review> getComments() { return this.comments.getComments(); }
 
-    public String getLikes() { return this.likes.toString(); }
+    public ArrayList<Long> getLikes() { return this.usersLikes.getLikes(); }
 
     public void setId(Long id) { this.id = id; }
 
@@ -54,13 +53,9 @@ public class Film {
 
     public void setGenres(Genre genres) { this.genres = genres; }
 
-    public void setComments(Comment comment) { this.comments.add(comment); }
+    public void setComment(Long userId, String comment) { this.comments.addComment(userId, comment); }
 
-    public void setLikes(Like like) {
-        if (like.getLike()) {
-            this.likes.add(like);
-        } else {
-            this.likes.remove(like);
-        }
-    }
+    public void like(Long userId) { this.usersLikes.like(userId); }
+
+    public void unlike(Long userId) { this.usersLikes.unlike(userId); }
 }

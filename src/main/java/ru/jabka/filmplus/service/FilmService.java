@@ -4,8 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import ru.jabka.filmplus.exception.BadRequestException;
 import ru.jabka.filmplus.model.Film;
-import ru.jabka.filmplus.model.FilmExtraInfo.Like;
-import ru.jabka.filmplus.model.FilmExtraInfo.Comment;
+import ru.jabka.filmplus.model.Genre;
 import ru.jabka.filmplus.model.User;
 
 import java.util.HashSet;
@@ -44,12 +43,21 @@ public class FilmService {
         return film;
     }
 
+    public Film search(final String name, final Genre genre) {
+        final Film film = films.stream()
+                .filter(u -> u.getName().equalsIgnoreCase(name) && u.getGenres().equals(genre))
+                .findFirst()
+                .orElse(null);
+        if (film == null) {
+            throw new BadRequestException(String.format("Фильм: жанр - %s, название - %s не найден!", genre.name(), name));
+        }
+        return film;
+    }
+
     public Film update(final Film film) {
         validate(film);
         final Film existFilm = getById(film.getId());
-        if (existFilm == null) {
-            return null;
-        }
+
         existFilm.setName(film.getName());
         existFilm.setDescription(film.getDescription());
         existFilm.setDuration(film.getDuration());
@@ -83,29 +91,39 @@ public class FilmService {
         }
     }
 
-    public Film addComment(final Film film, final Comment comment) {
-        if (film == null) {
+    public Film addComment(final Long userId, final Long filmId, final String comment) {
+        if (userId == null) {
+            throw new BadRequestException("Необходимо указать пользователя");
+        }
+        if (filmId == null) {
             throw new BadRequestException("Необходимо указать фильм!");
         }
-        if (comment == null) {
-            throw new BadRequestException("Необходимо указать комментарий!");
+        if (comment == null || comment.isEmpty()) {
+            throw new BadRequestException("Комментарий не может быть пустым!");
         }
-        final Film existFilm = getById(film.getId());
-        existFilm.setComments(comment);
+        final User user = UserService.getById(userId);
+        final Film film = getById(filmId);
 
-        return existFilm;
+        film.setComment(userId, comment);
+
+        return film;
     }
 
-    public Film addLike(final Film film, Like like) {
-        if (film == null) {
-            throw new BadRequestException("Необходимо указать id фильма!");
-        }
-        if (like == null) {
+    public Film addLike(final Long userId, final Long filmId) {
+        if (userId == null) {
             throw new BadRequestException("Необходимо указать id пользователя!");
         }
-        final Film existFilm = getById(film.getId());
-        existFilm.setLikes(like);
+        if (filmId == null) {
+            throw new BadRequestException("Необходимо указать id фильма!");
+        }
+        final User user = UserService.getById(userId);
+        final Film film = getById(filmId);
 
-        return existFilm;
+        if (film.getLikes().contains(userId)) {
+            throw new BadRequestException("Пользователь уже поставил лайк фильму!");
+        }
+        film.like(userId);
+
+        return film;
     }
 }

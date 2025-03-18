@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import ru.jabka.filmplus.exception.BadRequestException;
 import ru.jabka.filmplus.model.User;
-import ru.jabka.filmplus.model.UserExtraInfo.Friend;
 
 import java.util.HashSet;
 
@@ -20,7 +19,7 @@ public class UserService {
         return user;
     }
 
-    public User getById(final Long id) {
+    public static User getById(final Long id) {
         final User user = users.stream()
                 .filter(u -> u.getId() == id)
                 .findFirst()
@@ -66,32 +65,16 @@ public class UserService {
         }
     }
 
-    public User addUser(final User user, final User userAdd) {
-        final User existUser = getById(user.getId());
-        final User existUserAdd = getById(userAdd.getId());
+    public User addUserToFriend(final Long userId, final Long userFriendId) {
+        final User user = getById(userId);
+        final User userFriend = getById(userFriendId);
 
-        Friend friendFst = new Friend(existUser);
-        Friend friendSec = new Friend(existUserAdd);
-
-        if (!existUser.getFriends().contains(existUserAdd)){
-            existUser.addFriend(friendSec);
-            existUserAdd.addFriend(friendFst);
+        if (!user.getFriends().contains(userFriendId)){
+            user.addFriend(userFriendId);
+            userFriend.addFriend(userId);
         } else {
             throw new BadRequestException("Пользователи находятся в друзьях!");
         }
-        return existUser;
-    }
-
-    public User removeUser(final User user, final User userRemove) {
-        final User existUser = getById(user.getId());
-        final User existUserRemove = getById(userRemove.getId());
-
-        if (existUser.getFriends().contains(existUserRemove)){
-            existUser.getFriends().remove(existUserRemove);
-            existUserRemove.getFriends().remove(existUser);
-        } else {
-            throw new BadRequestException("Пользователи не находятся друг у друга в друзьях!");
-        }
-        return existUser;
+        return user;
     }
 }

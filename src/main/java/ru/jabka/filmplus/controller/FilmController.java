@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.jabka.filmplus.model.Film;
-import ru.jabka.filmplus.model.FilmExtraInfo.Comment;
-import ru.jabka.filmplus.model.FilmExtraInfo.Like;
+import ru.jabka.filmplus.model.Genre;
 import ru.jabka.filmplus.service.FilmService;
 
 @RestController
@@ -42,22 +42,16 @@ public class FilmController {
     @Operation(summary = "Получить фильм по названию")
     public Film get(@PathVariable final String name) { return filmService.getByName(name); }
 
+    @GetMapping
+    @Operation(summary = "Поиск фильма")
+    public Film search(@RequestParam final String name, @RequestParam final Genre genre) {
+        return filmService.search(name, genre);
+    }
+
     @PatchMapping
     @Operation(summary = "Обновление фильма")
     public Film update(@RequestBody final Film film) {
         return filmService.update(film);
-    }
-
-    @PatchMapping("/addComment")
-    @Operation(summary = "Добавление комментария к фильму")
-    public Film update(@RequestBody final Film film, @RequestBody final Comment comment) {
-        return filmService.addComment(film, comment);
-    }
-
-    @PatchMapping("/addLike")
-    @Operation(summary = "Добавление лайка к фильму")
-    public Film update(@RequestBody final Film film, @RequestBody final Like like) {
-        return filmService.addLike(film, like);
     }
 
     @DeleteMapping("/{id}")
