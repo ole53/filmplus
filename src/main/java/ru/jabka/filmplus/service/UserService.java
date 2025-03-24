@@ -5,6 +5,7 @@ import org.springframework.util.StringUtils;
 import ru.jabka.filmplus.exception.BadRequestException;
 import ru.jabka.filmplus.model.User;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 @Service
@@ -68,10 +69,17 @@ public class UserService {
     public User addUserToFriend(final Long userId, final Long userFriendId) {
         final User user = getById(userId);
         final User userFriend = getById(userFriendId);
+        final ArrayList<Long> firstUserFriends;
+        final ArrayList<Long> secondUserFriends;
 
         if (!user.getFriends().contains(userFriendId)){
-            user.addFriend(userFriendId);
-            userFriend.addFriend(userId);
+            firstUserFriends = user.getFriends();
+            firstUserFriends.add(userFriendId);
+            user.setFriends(firstUserFriends);
+
+            secondUserFriends = userFriend.getFriends();
+            secondUserFriends.add(userId);
+            userFriend.setFriends(secondUserFriends);
         } else {
             throw new BadRequestException("Пользователи находятся в друзьях!");
         }

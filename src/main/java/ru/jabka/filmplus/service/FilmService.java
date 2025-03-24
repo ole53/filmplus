@@ -5,8 +5,12 @@ import org.springframework.util.StringUtils;
 import ru.jabka.filmplus.exception.BadRequestException;
 import ru.jabka.filmplus.model.Film;
 import ru.jabka.filmplus.model.Genre;
+import ru.jabka.filmplus.model.LikeRequest;
+import ru.jabka.filmplus.model.Review;
+import ru.jabka.filmplus.model.ReviewRequest;
 import ru.jabka.filmplus.model.User;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 @Service
@@ -104,7 +108,16 @@ public class FilmService {
         final User user = UserService.getById(userId);
         final Film film = getById(filmId);
 
-        film.setComment(userId, comment);
+        final Review review = new Review();
+        review.setUserId(userId);
+        review.setComment(comment);
+
+        final ArrayList<Review> arrReview = film.getComments().getComments();
+        final ReviewRequest revReq = new ReviewRequest();
+        arrReview.add(review);
+        revReq.setComments(arrReview);
+
+        film.setComments(revReq);
 
         return film;
     }
@@ -119,10 +132,14 @@ public class FilmService {
         final User user = UserService.getById(userId);
         final Film film = getById(filmId);
 
-        if (film.getLikes().contains(userId)) {
+        if (film.getUsersLikes().getLikes().contains(userId)) {
             throw new BadRequestException("Пользователь уже поставил лайк фильму!");
         }
-        film.like(userId);
+        final LikeRequest likeReq = film.getUsersLikes();
+        ArrayList<Long> arrLikes = likeReq.getLikes();
+        arrLikes.add(userId);
+        likeReq.setLikes(arrLikes);
+        film.setUsersLikes(likeReq);
 
         return film;
     }

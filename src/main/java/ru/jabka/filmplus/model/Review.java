@@ -1,12 +1,11 @@
 package ru.jabka.filmplus.model;
 
+import lombok.Builder;
+import lombok.Data;
+
+@Data
 public class Review {
 
     private Long userId;
     private String comment;
-
-    public Review(Long userId, String comment) {
-        this.userId = userId;
-        this.comment = comment;
-    }
 }
