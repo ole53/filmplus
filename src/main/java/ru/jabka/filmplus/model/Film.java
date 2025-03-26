@@ -15,6 +15,4 @@ public class Film {
     private LocalDate releaseDate;
     private Long duration;
     private Genre genres;
-    private ReviewRequest comments;
-    private LikeRequest usersLikes;
 }

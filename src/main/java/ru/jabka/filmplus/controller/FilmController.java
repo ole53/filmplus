@@ -53,10 +53,4 @@ public class FilmController {
     public Film update(@RequestBody final Film film) {
         return filmService.update(film);
     }
-
-    @DeleteMapping("/{id}")
-    @Operation(summary = "Удаление фильма")
-    public void delete(@PathVariable final Long id) {
-        filmService.delete(id);
-    }
 }

@@ -6,23 +6,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.jabka.filmplus.model.Film;
-import ru.jabka.filmplus.service.FilmService;
+import ru.jabka.filmplus.model.Like;
+import ru.jabka.filmplus.service.LikeService;
 
 @RestController
 @RequestMapping("/api/v1/film/like")
 @Tag(name = "Добавление лайков к фильму")
 public class FilmLikeController {
 
-    private final FilmService filmService;
+    private final LikeService likeService;
 
-    public FilmLikeController(final FilmService filmService) {
-        this.filmService = filmService;
+    public FilmLikeController(final LikeService likeService) {
+        this.likeService = likeService;
     }
 
     @PostMapping("/add")
     @Operation(summary = "Поставить фильму лайк")
-    public Film addLikeToFilm(@RequestBody final Long userId, @RequestBody final Long filmId) {
-        return filmService.addLike(userId, filmId);
+    public Like addLikeToFilm(@RequestBody final Like like) {
+        return likeService.create(like);
     }
 }

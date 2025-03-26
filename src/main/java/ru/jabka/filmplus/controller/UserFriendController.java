@@ -6,23 +6,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.jabka.filmplus.model.User;
-import ru.jabka.filmplus.service.UserService;
+import ru.jabka.filmplus.model.Friend;
+import ru.jabka.filmplus.service.FriendService;
 
 @RestController
 @RequestMapping("/api/v1/friends")
 @Tag(name = "Добавление пользователей в друзья")
 public class UserFriendController {
 
-    private final UserService userService;
+    private final FriendService friendService;
 
-    public UserFriendController(final UserService userService) {
-        this.userService = userService;
+    public UserFriendController(final FriendService friendService) {
+        this.friendService = friendService;
     }
 
     @PostMapping("/add")
     @Operation(summary = "Добавить пользователя в друзья")
-    public User addUserToFriend(@RequestBody final Long userId, @RequestBody final Long userFriendId) {
-        return userService.addUserToFriend(userId, userFriendId);
+    public Friend addUserToFriend(@RequestBody final Friend friend) {
+        return friendService.create(friend);
     }
 }
