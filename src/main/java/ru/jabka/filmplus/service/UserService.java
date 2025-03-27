@@ -1,48 +1,34 @@
 package ru.jabka.filmplus.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import ru.jabka.filmplus.exception.BadRequestException;
 import ru.jabka.filmplus.model.User;
+import ru.jabka.filmplus.repository.UserRepository;
 
 import java.util.HashSet;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    private static final HashSet<User> users = new HashSet<>();
+    private final UserRepository userRepository;
 
     public User create(final User user) {
         validate(user);
-        user.setId((long) users.size() + 1);
-        users.add(user);
-        return user;
+
+        return userRepository.insert(user);
     }
 
     public User getById(final Long id) {
-        final User user = users.stream()
-                .filter(u -> u.getId() == id)
-                .findFirst()
-                .orElse(null);
-        if (user == null) {
-            throw new BadRequestException(String.format("Пользователь с id %d не найден", id));
-        }
-        return user;
+        return userRepository.getById(id);
     }
 
     public User update(final User user) {
         validate(user);
-        final User existUser = getById(user.getId());
-        if (existUser == null) {
-            return null;
-        }
-        existUser.setName(user.getName());
-        existUser.setEmail(user.getEmail());
-        return existUser;
-    }
 
-    public void delete(final Long id) {
-        users.remove(getById(id));
+        return userRepository.update(user);
     }
 
     private void validate(final User user) {
@@ -54,6 +40,12 @@ public class UserService {
         }
         if (!StringUtils.hasText(user.getEmail())) {
             throw new BadRequestException("Необходимо указать адрес электронной почты пользователя!");
+        }
+        if (!StringUtils.hasText(user.getLogin())) {
+            throw new BadRequestException("Необходимо указать логин!");
+        }
+        if (user.getBirthday() == null) {
+            throw new BadRequestException("Необходимо указать дату рождения!");
         }
     }
 }

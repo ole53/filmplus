@@ -7,11 +7,12 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-public class User {
+public class Film {
 
     private Long id;
     private String name;
-    private String email;
-    private String login;
-    private LocalDate birthday;
+    private String description;
+    private LocalDate releaseDate;
+    private Long duration;
+    private Genre genres;
 }

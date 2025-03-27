@@ -7,11 +7,11 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-public class User {
+public class Review {
 
     private Long id;
-    private String name;
-    private String email;
-    private String login;
-    private LocalDate birthday;
+    private Long userId;
+    private Long filmId;
+    private String comment;
+    private LocalDate date_create;
 }
